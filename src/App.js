@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import Chrono from './components/chrono.js';
 import './App.css';
 
