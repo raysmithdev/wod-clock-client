@@ -1,25 +1,88 @@
 import React, { Component } from 'react';
 
+const formattedSeconds = (sec) =>
+  Math.floor(sec / 60) +
+    ':' +
+  ('0' + sec % 60).slice(-2)
+
 
 class Chrono extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      secondsElapsed: 0,
+      laps: [],
+      lastClearedIncrementer: null
+    };
+    this.incrementer = null;
+  }
+
+  handleStartClick() {
+    this.incrementer = setInterval( () =>
+      this.setState({
+        secondsElapsed: this.state.secondsElapsed + 1
+      })
+    , 1000);
+  }
+
+  handleStopClick() {
+    clearInterval(this.incrementer);
+    this.setState({
+      lastClearedIncrementer: this.incrementer
+    });
+  }
+
+  handleResetClick() {
+    clearInterval(this.incrementer);
+    this.setState({
+      secondsElapsed: 0,
+      laps: []
+    });
+  }
+
+  handleLabClick() {
+    this.setState({
+      laps: this.state.laps.concat([this.state.secondsElapsed])
+    })
+  }
+
   render() {
     return (
-      <div className="Chrono-main">
-        <h1>"3...2...1..."<button>GO!</button></h1>
-          <p className="Chrono-clock">
-              <h1>"[Contains the clock]"</h1>
-          </p>
-          <p className="Chrono-times">
-              <h2>"Contains the saved times when stop is selected"</h2>
-              <h2>"00:00", "12:05"</h2>
-          </p>
-          <p className="Chrono-API">
-              <h2>"Contains the API accessed WOD info from Wodify."</h2>
-              <h2>"The WOD of the day is..."</h2>
-          </p>
+      <div className="Chrono">
+        <h1 className="Chrono-timer">{formattedSeconds(this.state.secondsElapsed)}</h1>
+
+        {(this.state.secondsElapsed === 0 ||
+          this.incrementer === this.state.lastClearedIncrementer
+          ? <Button className="start-btn" onClick={this.handleStartClick.bind(this)}>start</Button>
+          : <Button className="stop-btn" onClick={this.handleStopClick.bind(this)}>stop</Button>
+        )}
+
+        {(this.state.secondsElapsed !== 0 &&
+          this.incrementer !== this.state.lastClearedIncrementer
+          ? <Button onClick={this.handleLabClick.bind(this)}>lab</Button>
+          : null
+        )}
+
+
+        {(this.state.secondsElapsed !== 0 &&
+          this.incrementer === this.state.lastClearedIncrementer
+          ? <Button onClick={this.handleResetClick.bind(this)}>reset</Button>
+          : null
+        )}
+
+        <ul className="Chrono-laps">
+          { this.state.laps.map((lap, i) =>
+              <li className="Chrono-lap"><strong>{i + 1}</strong>/ {formattedSeconds(lap)}</li>)
+          }
+        </ul>
       </div>
     );
   }
 }
+const Button = (props) =>
+  <button type="button" {...props} className={"btn " + props.className } />;
+
+
+
 
 export default Chrono;
