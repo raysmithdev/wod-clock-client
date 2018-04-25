@@ -11,6 +11,8 @@ class App extends Component {
       //as well as the api login info and test info will be defined
     }
   }
+
+  
   onClick(button){
     this.setState({
       //this is the part where when you log into the api, it'll
@@ -34,8 +36,8 @@ class App extends Component {
 
         </p>
         <p className="App-login">
-            [Placeholder for API info for Wodify login screen]
-            
+            Placeholder for API info for Wodify login screen
+
         </p>
         <Chrono  />
       </div>
